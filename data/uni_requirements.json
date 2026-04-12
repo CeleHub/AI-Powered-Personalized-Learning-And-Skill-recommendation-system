@@ -1,0 +1,52 @@
+{
+  "Computer Science": {
+    "compulsory": ["Mathematics", "English"],
+    "electives_required": 3,
+    "recommended_electives": ["Physics", "Chemistry", "Biology", "Further Mathematics", "Computer Studies", "Data Processing"]
+  },
+  "Computer Engineering": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry"],
+    "electives_required": 1,
+    "recommended_electives": ["Further Mathematics", "Technical Drawing", "Biology"]
+  },
+  "Medicine and Surgery": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry", "Biology"],
+    "electives_required": 0,
+    "recommended_electives": []
+  },
+  "Data Science": {
+    "compulsory": ["Mathematics", "English"],
+    "electives_required": 3,
+    "recommended_electives": ["Physics", "Further Mathematics", "Economics", "Computer Studies", "Statistics"]
+  },
+  "Cybersecurity": {
+    "compulsory": ["Mathematics", "English"],
+    "electives_required": 3,
+    "recommended_electives": ["Physics", "Further Mathematics", "Computer Studies", "Data Processing", "Government"]
+  },
+  "Software Engineering": {
+    "compulsory": ["Mathematics", "English", "Physics"],
+    "electives_required": 2,
+    "recommended_electives": ["Chemistry", "Further Mathematics", "Computer Studies", "Technical Drawing"]
+  },
+  "Mechanical Engineering": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry"],
+    "electives_required": 1,
+    "recommended_electives": ["Further Mathematics", "Technical Drawing", "Biology"]
+  },
+  "Electrical Engineering": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry"],
+    "electives_required": 1,
+    "recommended_electives": ["Further Mathematics", "Technical Drawing", "Biology"]
+  },
+  "Economics": {
+    "compulsory": ["Mathematics", "English", "Economics"],
+    "electives_required": 2,
+    "recommended_electives": ["Commerce", "Government", "Geography", "Accounting"]
+  },
+  "Accounting": {
+    "compulsory": ["Mathematics", "English", "Accounting"],
+    "electives_required": 2,
+    "recommended_electives": ["Economics", "Commerce", "Government", "Geography"]
+  }
+}

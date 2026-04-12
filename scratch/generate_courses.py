@@ -1,0 +1,80 @@
+import csv
+
+courses = [
+    # AI & Machine Learning
+    [1, "Machine Learning Specialization", "Coursera", "AI", "Beginner", "Python,Linear Algebra,Statistics", "3 months"],
+    [2, "Deep Learning Specialization", "Coursera", "AI", "Intermediate", "Neural Networks,Python,TensorFlow", "4 months"],
+    [3, "AI For Everyone", "Coursera", "AI", "Beginner", "AI Literacy,Business Strategy", "1 month"],
+    [4, "Natural Language Processing", "Coursera", "AI", "Advanced", "NLP,RNNs,Python", "3 months"],
+    [5, "GenAI with LLMs", "DeepLearning.ai", "AI", "Intermediate", "LLMs,Python,Transformers", "2 months"],
+    
+    # Web Development
+    [6, "The Web Developer Bootcamp", "Udemy", "Web Development", "Beginner", "HTML,CSS,JavaScript,NodeJS", "6 months"],
+    [7, "React - The Complete Guide", "Udemy", "Web Development", "Intermediate", "React,JavaScript,Hooks", "3 months"],
+    [8, "Advanced CSS and Sass", "Udemy", "Web Development", "Advanced", "CSS,Sass,Animation", "2 months"],
+    [9, "Next.js & React - The Complete Guide", "Udemy", "Web Development", "Intermediate", "NextJS,React,Server Components", "3 months"],
+    [10, "Full Stack Web Development", "EdX", "Web Development", "Beginner", "HTML,CSS,SQL,JavaScript", "5 months"],
+    
+    # Cybersecurity
+    [11, "Google Cybersecurity Professional Certificate", "Coursera", "Cybersecurity", "Beginner", "Linux,Network Security,Python", "6 months"],
+    [12, "Ethical Hacking for Beginners", "Udemy", "Cybersecurity", "Beginner", "Metasploit,Networking", "3 months"],
+    [13, "CompTIA Security+ Certification", "CompTIA", "Cybersecurity", "Intermediate", "Security Principles,Threats", "4 months"],
+    [14, "Advanced Penetration Testing", "OffSec", "Cybersecurity", "Advanced", "Kali Linux,Exploits", "6 months"],
+    [15, "Cybersecurity Fundamentals", "EdX", "Cybersecurity", "Beginner", "Security Basics,Risk Management", "2 months"],
+
+    # Data Science
+    [16, "Data Science Specialization", "Coursera", "Data Science", "Beginner", "R,Data Visualization,Statistics", "5 months"],
+    [17, "Python for Data Science and ML", "Udemy", "Data Science", "Intermediate", "Pandas,Scikit-learn,Python", "4 months"],
+    [18, "Data Analysis with Python", "EdX", "Data Science", "Beginner", "Numpy,Pandas,Python", "3 months"],
+    [19, "Tableau for Data Science", "Udemy", "Data Science", "Intermediate", "Tableau,Data Viz", "1 month"],
+    [20, "Advanced SQL for Data Scientists", "LinkedIn Learning", "Data Science", "Advanced", "SQL,Query Optimization", "2 months"],
+
+    # Cloud Computing
+    [21, "AWS Certified Solutions Architect", "Udemy", "Cloud", "Intermediate", "AWS,Cloud Architecture", "4 months"],
+    [22, "Google Cloud Digital Leader", "Coursera", "Cloud", "Beginner", "GCP,Cloud Concepts", "2 months"],
+    [23, "Azure Fundamentals (AZ-900)", "Microsoft", "Cloud", "Beginner", "Azure,Cloud Services", "1 month"],
+    [24, "Docker and Kubernetes", "Udemy", "Cloud", "Intermediate", "Docker,K8s,DevOps", "3 months"],
+    [25, "Terraform on AWS for Beginners", "Udemy", "Cloud", "Beginner", "IaC,Terraform,AWS", "2 months"],
+
+    # Mobile Development
+    [26, "iOS & Swift - The Complete Bootcamp", "Udemy", "Mobile", "Beginner", "Swift,XCode,SwiftUI", "5 months"],
+    [27, "Flutter & Dart - The Complete Guide", "Udemy", "Mobile", "Beginner", "Flutter,Dart,UI", "4 months"],
+    [28, "Android Development with Kotlin", "Google", "Mobile", "Intermediate", "Kotlin,Android Studio", "4 months"],
+    [29, "React Native - The Practical Guide", "Udemy", "Mobile", "Intermediate", "React,React Native,JS", "3 months"],
+    [30, "Advanced Android Development", "Udemy", "Mobile", "Advanced", "Dagger,Jetpack Compose", "4 months"],
+
+    # Software Engineering & Programming
+    [31, "CS50's Introduction to Computer Science", "EdX", "Programming", "Beginner", "C,Python,Algorithms", "6 months"],
+    [32, "Java Programming Masterclass", "Udemy", "Programming", "Beginner", "Java,OOP", "5 months"],
+    [33, "Clean Code: Writing Code for Humans", "Pluralsight", "Programming", "Intermediate", "Refactoring,OOP", "2 months"],
+    [34, "Design Patterns in Python", "Udemy", "Programming", "Advanced", "Patterns,OOP", "3 months"],
+    [35, "Foundations of Computer Science", "Coursera", "Programming", "Beginner", "Discrete Math,Binary", "3 months"],
+
+    # UI/UX & Digital Design
+    [36, "Google UX Design Professional Certificate", "Coursera", "Design", "Beginner", "Figma,Adobe XD,UX Research", "6 months"],
+    [37, "UI Design with Figma", "Udemy", "Design", "Beginner", "Figma,UI Principles", "2 months"],
+    [38, "Advanced UI/UX Design Strategies", "Udemy", "Design", "Advanced", "Prototyping,HCI", "3 months"],
+    [39, "Graphic Design Specialization", "Coursera", "Design", "Beginner", "Photoshop,Illustrator", "4 months"],
+    [40, "Interaction Design Fundamentals", "EdX", "Design", "Intermediate", "HCI,User Flows", "3 months"],
+
+    # Product Management & Business
+    [41, "Product Management First Steps", "LinkedIn Learning", "Business", "Beginner", "Product Cycle,PM Basics", "1 month"],
+    [42, "Advanced Product Management", "Udemy", "Business", "Advanced", "Scrum,Market Analysis", "3 months"],
+    [43, "Digital Marketing Specialization", "Coursera", "Business", "Beginner", "SEO,SEM,Content Marketing", "4 months"],
+    [44, "FinTech: Foundations & Applications", "Coursera", "Business", "Beginner", "Blockchain,Finance", "3 months"],
+    [45, "Agile with Atlassian Jira", "Coursera", "Business", "Beginner", "Agile,Jira,Kanban", "1 month"],
+
+    # Networking & Hardware
+    [46, "Cisco CCNA 200-301", "Cisco", "Networking", "Intermediate", "Routing,Switching,IP", "6 months"],
+    [47, "Network+ Certification", "Udemy", "Networking", "Beginner", "Networking Basics", "4 months"],
+    [48, "IoT Fundamentals", "Coursera", "Hardware", "Beginner", "IoT,Embedded Systems", "3 months"],
+    [49, "Arduino Robotics", "Udemy", "Hardware", "Beginner", "Arduino,C++", "3 months"],
+    [50, "Computer Networking Essentials", "EdX", "Networking", "Beginner", "OSI Model,Protocol", "2 months"]
+]
+
+with open('data/courses.csv', 'w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(["id", "title", "provider", "category", "difficulty", "skills_covered", "duration"])
+    writer.writerows(courses)
+
+print("Courses generated successfully.")

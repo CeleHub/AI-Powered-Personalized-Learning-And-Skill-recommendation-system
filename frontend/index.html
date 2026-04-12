@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Course Recommender | Personalized Learning</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="bg-animation"></canvas>
+
+    <div id="app" class="container">
+        <h1>AI Course Advisor</h1>
+        
+        <div class="progress-container" id="progress-bar">
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+        </div>
+
+        <!-- Step 1: Personal Info -->
+        <div class="step-container active" id="step-1">
+            <h2>Personal Information</h2>
+            <p>Let's start by getting to know you.</p>
+            <div class="input-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="John Doe">
+            </div>
+            <div class="button-group">
+                <div></div>
+                <button class="btn-primary" onclick="nextStep(2)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Academic Info -->
+        <div class="step-container" id="step-2">
+            <h2>Academic Performance</h2>
+            <p>Tell us about your educational background.</p>
+            <div class="input-group">
+                <label for="academic-type">Education Level</label>
+                <select id="academic-type" onchange="toggleAcademicFields()">
+                    <option value="PRE_UNIVERSITY">Pre-University (O-Levels)</option>
+                    <option value="UNIVERSITY/POST">University / Post-Graduate</option>
+                </select>
+            </div>
+            
+            <div id="pre-uni-fields">
+                <div class="input-group">
+                    <label>Compulsory Subject Grades (WAEC/NECO)</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <div style="flex: 1">
+                            <label style="font-size: 0.8rem">Mathematics</label>
+                            <select id="math-grade">
+                                <option value="A1">A1</option><option value="B2">B2</option><option value="B3">B3</option>
+                                <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
+                                <option value="D7">D7</option><option value="E8">E8</option><option value="F9">F9</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1">
+                            <label style="font-size: 0.8rem">English</label>
+                            <select id="english-grade">
+                                <option value="A1">A1</option><option value="B2">B2</option><option value="B3">B3</option>
+                                <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
+                                <option value="D7">D7</option><option value="E8">E8</option><option value="F9">F9</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label>Extra Subjects (Optional)</label>
+                    <textarea id="extra-subjects" placeholder="Physics: B2, Chemistry: C4..." rows="2"></textarea>
+                </div>
+            </div>
+
+            <div id="uni-fields" style="display: none;">
+                <div class="input-group">
+                    <label for="gpa">Current GPA / Final GPA</label>
+                    <input type="number" id="gpa" step="0.01" min="0" max="5.0" placeholder="e.g. 4.20">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep(1)">Back</button>
+                <button class="btn-primary" onclick="nextStep(3)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Interests & Skills -->
+        <div class="step-container" id="step-3">
+            <h2>Interests & Skills</h2>
+            <p>What are you passionate about and what can you already do?</p>
+            <div class="input-group">
+                <label for="interests">Interests (Separate by comma)</label>
+                <input type="text" id="interests" placeholder="AI, Web Development, Cybersecurity">
+            </div>
+            <div class="input-group">
+                <label>Current Skills</label>
+                <textarea id="current-skills" placeholder="HTML (Beginner), Python (Intermediate)..." rows="3"></textarea>
+            </div>
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep(2)">Back</button>
+                <button class="btn-primary" onclick="nextStep(4)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Career Goals -->
+        <div class="step-container" id="step-4">
+            <h2>Career Goals</h2>
+            <p>This is the most important part. Where do you want to be?</p>
+            <div class="input-group">
+                <label for="career-goal">Target Career / Role</label>
+                <input type="text" id="career-goal" placeholder="e.g. Become a Senior Data Scientist">
+            </div>
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep(3)">Back</button>
+                <button class="btn-primary" id="finalize-btn" onclick="submitProfile()">Generate My Roadmap</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Results Dashboard -->
+        <div class="step-container" id="step-result">
+            <h2 id="result-title">Your Recommendations</h2>
+            <div id="dashboard-content" class="dashboard">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="button-group">
+                <button class="btn-secondary" onclick="location.reload()">Start Over</button>
+                <button class="btn-primary" onclick="window.print()">Export PDF</button>
+            </div>
+        </div>
+
+        <div id="loading" style="display: none; text-align: center;">
+            <div class="loader"></div>
+            <p>AI is analyzing your profile...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
