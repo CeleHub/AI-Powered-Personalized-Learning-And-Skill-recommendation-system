@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from typing import List, Dict, Optional
 import uvicorn
 
-import gemini_util
-import engine
+from backend import gemini_util
+from backend import engine
 
 app = FastAPI(title="AI-Powered Course Recommendation System")
 
