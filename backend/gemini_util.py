@@ -34,7 +34,7 @@ def extract_required_skills(career_goal: str):
         return skills
     except Exception as e:
         print(f"Error calling Gemini API: {e}")
-        return ["Python", "JavaScript", "SQL"] # Dummy fallback
+        return ["Analytical Thinking", "Problem Solving", "Professional Ethics", "Communication", "Time Management", "Leadership"]
 
 def suggest_university_course(career_goal: str, academic_performance: dict):
     """
@@ -55,4 +55,4 @@ def suggest_university_course(career_goal: str, academic_performance: dict):
         return response.text.strip()
     except Exception as e:
         print(f"Error calling Gemini API: {e}")
-        return "Software Engineering"
+        return "General Studies academic path"

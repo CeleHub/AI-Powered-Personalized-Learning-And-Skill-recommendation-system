@@ -39,15 +39,32 @@ def health_check():
 @app.post("/recommend")
 async def get_recommendations(profile: UserProfile):
     try:
+        # Detect API Status
+        api_status = "online"
+        
         # 1. Extract skills from career goal using AI
         extracted_skills = gemini_util.extract_required_skills(profile.career_goal)
         
+        # Check if Gemini hit a limit (returning its generic fallback skills)
+        if "Analytical Thinking" in extracted_skills or "Professional Ethics" in extracted_skills:
+            # Switch to Layer 2: Local Keyword Engine
+            extracted_skills = engine.get_local_fallback_skills(profile.career_goal)
+            api_status = "fallback"
+            
         # 2. Suggest a university course if pre-university
         uni_suggestion = ""
         eligibility_status = {"eligible": True, "message": ""}
         
         if profile.academic_type == "PRE_UNIVERSITY":
             uni_suggestion = gemini_util.suggest_university_course(profile.career_goal, profile.academic_performance)
+            
+            # If AI degree suggestion failed (returned default), refine it locally if possible
+            if uni_suggestion == "General Studies academic path" and api_status == "fallback":
+                # Basic local mapping for degree
+                if "doctor" in profile.career_goal.lower(): uni_suggestion = "Medicine and Surgery"
+                elif "law" in profile.career_goal.lower(): uni_suggestion = "Law"
+                elif "nurse" in profile.career_goal.lower(): uni_suggestion = "Nursing Science"
+            
             eligible, msg = engine.check_uni_eligibility(profile.dict(), uni_suggestion)
             eligibility_status = {"eligible": eligible, "message": msg}
         
@@ -56,10 +73,11 @@ async def get_recommendations(profile: UserProfile):
         
         return {
             "user_name": profile.name,
+            "api_status": api_status, # "online" or "fallback"
             "target_skills": extracted_skills,
             "university_recommendation": uni_suggestion,
             "eligibility": eligibility_status,
-            "course_recommendations": recommendations
+            "course_recommendations": recommendations[:6]
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

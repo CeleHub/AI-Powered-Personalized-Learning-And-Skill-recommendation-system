@@ -121,6 +121,13 @@ function renderResults(data) {
     const dashboard = document.getElementById('dashboard-content');
     dashboard.innerHTML = '';
 
+    const statusBanner = document.getElementById('api-status-banner');
+    if (data.api_status === 'fallback') {
+        statusBanner.classList.remove('hidden');
+    } else {
+        statusBanner.classList.add('hidden');
+    }
+
     document.getElementById('result-title').innerText = `Recommendations for ${data.user_name}`;
 
     // 1. Skill Gaps Card

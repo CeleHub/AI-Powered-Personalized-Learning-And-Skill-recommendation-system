@@ -75,6 +75,36 @@ def check_uni_eligibility(profile: dict, target_degree: str):
         
     return True, f"Eligible for {target_degree} at Nigerian Universities."
 
+def get_local_fallback_skills(career_goal: str):
+    """
+    Standardizes a career goal into skills using local keyword matching.
+    Acts as a fail-safe for API limits.
+    """
+    goal = career_goal.lower()
+    
+    # Keyword mapping
+    mapping = {
+        "doctor": ["Anatomy", "Physiology", "Patient Assessment", "Internal Medicine", "Surgery", "Ethics", "Biology"],
+        "nurse": ["Patient Care", "Medication Administration", "Anatomy", "Wound Care", "Nursing Ethics", "Clinical Research"],
+        "lawyer": ["Litigation", "Legal Drafting", "Constitutional Law", "Contracts", "Legal Ethics", "English Common Law"],
+        "accountant": ["Financial Reporting", "Audit", "Management Accounting", "Taxation", "ICAN Prep", "Bookkeeping"],
+        "engineer": ["Mathematics", "Physics", "AutoCAD", "Structural Engineering", "Project Management", "COREN Ethics"],
+        "architect": ["3D Design", "AutoCAD", "Urban Planning", "Building Codes", "Fine Arts", "Statics"],
+        "teacher": ["Pedagogy", "Curriculum Design", "Classroom Management", "Educational Psychology", "Communication"],
+        "artist": ["Fine Arts", "Graphic Design", "Illustration", "Color Theory", "Composition", "Digital Art"],
+        "farmer": ["Crop Science", "Soil Management", "Agribusiness", "Livestock Management", "Sustainable Farming"],
+        "data scientist": ["Python", "SQL", "Statistics", "Machine Learning", "Data Visualization", "Mathematics"],
+        "web developer": ["HTML", "CSS", "JavaScript", "React", "NodeJS", "SQL", "Git"],
+        "cyber": ["Network Security", "Linux", "Ethical Hacking", "Risk Management", "Cryptography"]
+    }
+    
+    for key, skills in mapping.items():
+        if key in goal:
+            return skills
+    
+    # Universal Fallback if no keyword matches
+    return ["Analytical Thinking", "Problem Solving", "Professional Ethics", "Communication", "Time Management", "Leadership"]
+
 def recommend_courses(profile: dict, extracted_skills: list):
     """
     Main recommendation function.
