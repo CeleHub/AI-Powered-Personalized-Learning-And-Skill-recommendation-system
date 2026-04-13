@@ -4,7 +4,7 @@ let currentStep = 1;
 // Deployment Configuration
 // IMPORTANT: Once you deploy your backend to Render, replace the placeholder below with your Render URL
 // Example: "https://your-api-name.onrender.com"
-const PRODUCTION_API_URL = "YOUR_RENDER_BACKEND_URL_HERE";
+const PRODUCTION_API_URL = "https://ai-powered-personalized-learning-and.onrender.com";
 
 const getApiBaseUrl = () => {
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
@@ -16,7 +16,7 @@ const getApiBaseUrl = () => {
 function nextStep(step) {
     document.getElementById(`step-${currentStep}`).classList.remove('active');
     document.getElementById(`step-${step}`).classList.add('active');
-    
+
     // Update progress bar
     const steps = document.querySelectorAll('.progress-step');
     for (let i = 0; i < steps.length; i++) {
@@ -26,7 +26,7 @@ function nextStep(step) {
             steps[i].classList.remove('active');
         }
     }
-    
+
     currentStep = step;
 }
 
@@ -48,16 +48,16 @@ function toggleAcademicFields() {
 async function submitProfile() {
     const loader = document.getElementById('loading');
     const finalizeBtn = document.getElementById('finalize-btn');
-    
+
     loader.style.display = 'block';
     finalizeBtn.disabled = true;
-    
+
     // Collect Data
     const name = document.getElementById('name').value;
     const academicType = document.getElementById('academic-type').value;
     const interests = document.getElementById('interests').value.split(',').map(i => i.trim());
     const careerGoal = document.getElementById('career-goal').value;
-    
+
     let academicPerformance = {};
     if (academicType === 'PRE_UNIVERSITY') {
         const subjects = {
@@ -78,7 +78,7 @@ async function submitProfile() {
     } else {
         academicPerformance = { gpa: document.getElementById('gpa').value };
     }
-    
+
     // Parse skills
     const skillsText = document.getElementById('current-skills').value;
     const skills = skillsText.split(',').map(item => {
@@ -120,9 +120,9 @@ async function submitProfile() {
 function renderResults(data) {
     const dashboard = document.getElementById('dashboard-content');
     dashboard.innerHTML = '';
-    
+
     document.getElementById('result-title').innerText = `Recommendations for ${data.user_name}`;
-    
+
     // 1. Skill Gaps Card
     const skillCard = createBentoCard('Skill Roadmap', 'card-large');
     skillCard.innerHTML += `<p>Based on your goal, you need to focus on these skills:</p>`;
@@ -194,19 +194,19 @@ for (let i = 0; i < 50; i++) {
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'rgba(187, 134, 252, 0.2)';
-    
+
     particles.forEach(p => {
         p.x += p.vx;
         p.y += p.vy;
-        
+
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
     });
-    
+
     requestAnimationFrame(animate);
 }
 
