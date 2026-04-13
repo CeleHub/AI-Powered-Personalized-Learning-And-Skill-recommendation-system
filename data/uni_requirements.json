@@ -14,39 +14,59 @@
     "electives_required": 0,
     "recommended_electives": []
   },
-  "Data Science": {
-    "compulsory": ["Mathematics", "English"],
-    "electives_required": 3,
-    "recommended_electives": ["Physics", "Further Mathematics", "Economics", "Computer Studies", "Statistics"]
+  "Nursing Science": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry", "Biology"],
+    "electives_required": 0,
+    "recommended_electives": []
   },
-  "Cybersecurity": {
-    "compulsory": ["Mathematics", "English"],
-    "electives_required": 3,
-    "recommended_electives": ["Physics", "Further Mathematics", "Computer Studies", "Data Processing", "Government"]
+  "Pharmacy": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry", "Biology"],
+    "electives_required": 0,
+    "recommended_electives": []
   },
-  "Software Engineering": {
+  "Law": {
+    "compulsory": ["English", "Literature in English", "Government"],
+    "electives_required": 2,
+    "recommended_electives": ["Mathematics", "CRS/IRS", "History", "Economics"]
+  },
+  "Architecture": {
     "compulsory": ["Mathematics", "English", "Physics"],
     "electives_required": 2,
-    "recommended_electives": ["Chemistry", "Further Mathematics", "Computer Studies", "Technical Drawing"]
+    "recommended_electives": ["Chemistry", "Technical Drawing", "Fine Arts", "Geography"]
   },
-  "Mechanical Engineering": {
+  "Civil Engineering": {
     "compulsory": ["Mathematics", "English", "Physics", "Chemistry"],
     "electives_required": 1,
-    "recommended_electives": ["Further Mathematics", "Technical Drawing", "Biology"]
+    "recommended_electives": ["Further Mathematics", "Technical Drawing", "Geography"]
   },
-  "Electrical Engineering": {
-    "compulsory": ["Mathematics", "English", "Physics", "Chemistry"],
+  "Accounting": {
+    "compulsory": ["Mathematics", "English", "Economics", "Accounting"],
     "electives_required": 1,
-    "recommended_electives": ["Further Mathematics", "Technical Drawing", "Biology"]
+    "recommended_electives": ["Commerce", "Government", "Geography"]
   },
   "Economics": {
     "compulsory": ["Mathematics", "English", "Economics"],
     "electives_required": 2,
     "recommended_electives": ["Commerce", "Government", "Geography", "Accounting"]
   },
-  "Accounting": {
-    "compulsory": ["Mathematics", "English", "Accounting"],
+  "Mass Communication": {
+    "compulsory": ["English", "Literature in English", "Government"],
     "electives_required": 2,
-    "recommended_electives": ["Economics", "Commerce", "Government", "Geography"]
+    "recommended_electives": ["Mathematics", "Economics", "History", "CRS/IRS"]
+  },
+  "Political Science": {
+    "compulsory": ["English", "Government", "Mathematics"],
+    "electives_required": 2,
+    "recommended_electives": ["Economics", "History", "Literature in English", "CRS/IRS"]
+  },
+  "Agricultural Science": {
+    "compulsory": ["Mathematics", "English", "Chemistry", "Biology", "Agricultural Science"],
+    "electives_required": 0,
+    "recommended_electives": ["Physics", "Geography", "Economics"]
+  },
+  "Medical Laboratory Science": {
+    "compulsory": ["Mathematics", "English", "Physics", "Chemistry", "Biology"],
+    "electives_required": 0,
+    "recommended_electives": []
   }
 }

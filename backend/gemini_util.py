@@ -24,9 +24,10 @@ def extract_required_skills(career_goal: str):
         model = genai.GenerativeModel('gemini-1.5-flash')
         prompt = f"""
         Given the career goal: "{career_goal}", 
-        provide a comma-separated list of the top 10 technical and soft skills required to succeed in this role.
+        provide a comma-separated list of the top 10 specialized technical, domain-specific, and soft skills required to succeed in this role.
         Format the output ONLY as a comma-separated string, no extra text.
-        Example: "Python, SQL, Data Visualization, Statistics, Machine Learning"
+        Example for a Nurse: "Patient Assessment, Medication Administration, Wound Care, Anatomy, Ethics, Communication"
+        Example for a Data Scientist: "Python, SQL, Statistics, Machine Learning, Data Visualization"
         """
         response = model.generate_content(prompt)
         skills = [s.strip() for s in response.text.split(",")]
@@ -47,8 +48,8 @@ def suggest_university_course(career_goal: str, academic_performance: dict):
         prompt = f"""
         A user wants to become a "{career_goal}". 
         Their academic performance is: {academic_performance}.
-        Based on the Nigerian university system, what is the single most relevant undergraduate degree they should study?
-        Provide ONLY the degree name.
+        Based on the Nigerian university system (NUC guidelines), what is the single most relevant undergraduate degree they should study?
+        Provide ONLY the degree name. If it's a professional path (like Law or Medicine), state the degree (e.g., 'Law', 'Medicine and Surgery', 'Nursing Science').
         """
         response = model.generate_content(prompt)
         return response.text.strip()

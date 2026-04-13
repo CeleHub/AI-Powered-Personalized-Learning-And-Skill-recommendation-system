@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 import uvicorn
+import os
 
 from backend import gemini_util
 from backend import engine

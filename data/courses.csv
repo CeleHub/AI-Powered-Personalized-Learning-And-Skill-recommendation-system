@@ -2,50 +2,55 @@ id,title,provider,category,difficulty,skills_covered,duration
 1,Machine Learning Specialization,Coursera,AI,Beginner,"Python,Linear Algebra,Statistics",3 months
 2,Deep Learning Specialization,Coursera,AI,Intermediate,"Neural Networks,Python,TensorFlow",4 months
 3,AI For Everyone,Coursera,AI,Beginner,"AI Literacy,Business Strategy",1 month
-4,Natural Language Processing,Coursera,AI,Advanced,"NLP,RNNs,Python",3 months
-5,GenAI with LLMs,DeepLearning.ai,AI,Intermediate,"LLMs,Python,Transformers",2 months
-6,The Web Developer Bootcamp,Udemy,Web Development,Beginner,"HTML,CSS,JavaScript,NodeJS",6 months
-7,React - The Complete Guide,Udemy,Web Development,Intermediate,"React,JavaScript,Hooks",3 months
-8,Advanced CSS and Sass,Udemy,Web Development,Advanced,"CSS,Sass,Animation",2 months
-9,Next.js & React - The Complete Guide,Udemy,Web Development,Intermediate,"NextJS,React,Server Components",3 months
-10,Full Stack Web Development,EdX,Web Development,Beginner,"HTML,CSS,SQL,JavaScript",5 months
-11,Google Cybersecurity Professional Certificate,Coursera,Cybersecurity,Beginner,"Linux,Network Security,Python",6 months
-12,Ethical Hacking for Beginners,Udemy,Cybersecurity,Beginner,"Metasploit,Networking",3 months
-13,CompTIA Security+ Certification,CompTIA,Cybersecurity,Intermediate,"Security Principles,Threats",4 months
-14,Advanced Penetration Testing,OffSec,Cybersecurity,Advanced,"Kali Linux,Exploits",6 months
-15,Cybersecurity Fundamentals,EdX,Cybersecurity,Beginner,"Security Basics,Risk Management",2 months
-16,Data Science Specialization,Coursera,Data Science,Beginner,"R,Data Visualization,Statistics",5 months
-17,Python for Data Science and ML,Udemy,Data Science,Intermediate,"Pandas,Scikit-learn,Python",4 months
-18,Data Analysis with Python,EdX,Data Science,Beginner,"Numpy,Pandas,Python",3 months
-19,Tableau for Data Science,Udemy,Data Science,Intermediate,"Tableau,Data Viz",1 month
-20,Advanced SQL for Data Scientists,LinkedIn Learning,Data Science,Advanced,"SQL,Query Optimization",2 months
-21,AWS Certified Solutions Architect,Udemy,Cloud,Intermediate,"AWS,Cloud Architecture",4 months
-22,Google Cloud Digital Leader,Coursera,Cloud,Beginner,"GCP,Cloud Concepts",2 months
-23,Azure Fundamentals (AZ-900),Microsoft,Cloud,Beginner,"Azure,Cloud Services",1 month
-24,Docker and Kubernetes,Udemy,Cloud,Intermediate,"Docker,K8s,DevOps",3 months
-25,Terraform on AWS for Beginners,Udemy,Cloud,Beginner,"IaC,Terraform,AWS",2 months
-26,iOS & Swift - The Complete Bootcamp,Udemy,Mobile,Beginner,"Swift,XCode,SwiftUI",5 months
-27,Flutter & Dart - The Complete Guide,Udemy,Mobile,Beginner,"Flutter,Dart,UI",4 months
-28,Android Development with Kotlin,Google,Mobile,Intermediate,"Kotlin,Android Studio",4 months
-29,React Native - The Practical Guide,Udemy,Mobile,Intermediate,"React,React Native,JS",3 months
-30,Advanced Android Development,Udemy,Mobile,Advanced,"Dagger,Jetpack Compose",4 months
-31,CS50's Introduction to Computer Science,EdX,Programming,Beginner,"C,Python,Algorithms",6 months
-32,Java Programming Masterclass,Udemy,Programming,Beginner,"Java,OOP",5 months
-33,Clean Code: Writing Code for Humans,Pluralsight,Programming,Intermediate,"Refactoring,OOP",2 months
-34,Design Patterns in Python,Udemy,Programming,Advanced,"Patterns,OOP",3 months
-35,Foundations of Computer Science,Coursera,Programming,Beginner,"Discrete Math,Binary",3 months
-36,Google UX Design Professional Certificate,Coursera,Design,Beginner,"Figma,Adobe XD,UX Research",6 months
-37,UI Design with Figma,Udemy,Design,Beginner,"Figma,UI Principles",2 months
-38,Advanced UI/UX Design Strategies,Udemy,Design,Advanced,"Prototyping,HCI",3 months
-39,Graphic Design Specialization,Coursera,Design,Beginner,"Photoshop,Illustrator",4 months
-40,Interaction Design Fundamentals,EdX,Design,Intermediate,"HCI,User Flows",3 months
-41,Product Management First Steps,LinkedIn Learning,Business,Beginner,"Product Cycle,PM Basics",1 month
-42,Advanced Product Management,Udemy,Business,Advanced,"Scrum,Market Analysis",3 months
-43,Digital Marketing Specialization,Coursera,Business,Beginner,"SEO,SEM,Content Marketing",4 months
-44,FinTech: Foundations & Applications,Coursera,Business,Beginner,"Blockchain,Finance",3 months
-45,Agile with Atlassian Jira,Coursera,Business,Beginner,"Agile,Jira,Kanban",1 month
-46,Cisco CCNA 200-301,Cisco,Networking,Intermediate,"Routing,Switching,IP",6 months
-47,Network+ Certification,Udemy,Networking,Beginner,Networking Basics,4 months
-48,IoT Fundamentals,Coursera,Hardware,Beginner,"IoT,Embedded Systems",3 months
-49,Arduino Robotics,Udemy,Hardware,Beginner,"Arduino,C++",3 months
-50,Computer Networking Essentials,EdX,Networking,Beginner,"OSI Model,Protocol",2 months
+4,The Web Developer Bootcamp,Udemy,Web Development,Beginner,"HTML,CSS,JavaScript,NodeJS",6 months
+5,React - The Complete Guide,Udemy,Web Development,Intermediate,"React,JavaScript,Hooks",3 months
+6,Google Cybersecurity Certificate,Coursera,Cybersecurity,Beginner,"Linux,Network Security,Python",6 months
+7,Data Science Specialization,Coursera,Data Science,Beginner,"R,Data Visualization,Statistics",5 months
+8,Anatomy and Physiology Specialization,Coursera,Healthcare,Beginner,"Human Anatomy,Systems,Physiology",4 months
+9,Nursing Case Management,Coursera,Healthcare,Intermediate,"Patient Advocacy,Clinical Research",2 months
+10,Foundations of Public Health,Coursera,Healthcare,Beginner,"Epidemiology,Policy,Health Promotion",3 months
+11,Clinical Research Mastery,Udemy,Healthcare,Intermediate,"Clinical Trials,Ethics,Data Analysis",4 months
+12,NMCN Professional Exam Prep (Nursing),Medical Academy,Healthcare,Advanced,"Nursing Ethics,Midwifery,Nursing Law",6 months
+13,MDCN Medical Licensing Exam Prep,Doctor Hub,Healthcare,Advanced,"Internal Medicine,Surgery,Pediatrics",12 months
+14,Medical Terminology for Beginners,Coursera,Healthcare,Beginner,"Medical Coding,Terminology",1 month
+15,Pediatric Nursing Fundamentals,Udemy,Healthcare,Beginner,"Child Care,Pediatrics",3 months
+16,Pharmacy Technician Basics,Udemy,Healthcare,Beginner,"Pharmacology,Prescriptions",4 months
+17,Introduction to English Common Law,Coursera,Law,Beginner,"Constitutional Law,Legal Systems",2 months
+18,Criminal Justice & Law Foundations,Coursera,Law,Beginner,"Criminal Law,Sociology",3 months
+19,Contract Law Mastery,Udemy,Law,Intermediate,"Contracts,Trade Law,Negotiation",4 months
+20,Nigerian Law School Exam Prep,Justice Chambers,Law,Advanced,"Litigation,Commercial Law,Nigerian Legal System",9 months
+21,International Human Rights Law,Coursera,Law,Intermediate,"Human Rights,Global Policy",3 months
+22,Psychological First Aid,Coursera,Social Science,Beginner,"Psychology,Mental Health Support",1 month
+23,NBA Professional Conduct & Ethics,Legal Nigeria,Law,Advanced,"Legal Ethics,Code of Conduct",2 months
+24,Financial Accounting Fundamentals,Coursera,Business,Beginner,"Bookkeeping,Ledgers,Tax",3 months
+25,ICAN Professional Exams (Skill Level),ICAN Nigeria,Business,Advanced,"Financial Reporting,Audit,Management Accounting",6 months
+26,ANAN Professional Diploma in Accounting,ANAN Nigeria,Business,Advanced,"Public Sector Accounting,Treasury Management",12 months
+27,CIPM Professional Certification (HR),CIPM Nigeria,Business,Advanced,"Human Resources,Labor Laws",8 months
+28,Chartered Institute of Bankers (CIBN) Prep,CIBN Nigeria,Business,Advanced,"Banking Laws,Finance Management,Ethics",10 months
+29,Small Business Management for Entrepreneurs,Udemy,Business,Beginner,"Marketing,Strategy,Fundraising",2 months
+30,NIPR Public Relations Certification,NIPR Nigeria,Business,Intermediate,"Public Relations,Media Management",4 months
+31,Auditing & Assurance Specialization,Coursera,Business,Intermediate,"Auditing,Internal Controls",4 months
+32,Supply Chain Management Specialization,Coursera,Business,Beginner,"Logistics,Procurement,Operations",5 months
+33,AutoCAD for Architects and Engineers,Udemy,Engineering,Beginner,"Drafting,CAD,2D/3D Design",4 months
+34,Structural Engineering Basics,Coursera,Engineering,Intermediate,"Statics,Building Materials,Structural Design",5 months
+35,COREN Engineering Professional Review Prep,NSE Nigeria,Engineering,Advanced,"Engineering Codes,Ethics,Project Management",6 months
+36,ARCON Architectural Professional Exams,ARCON Nigeria,Architecture,Advanced,"Building Design,Urban Planning,Nigeria Building Code",12 months
+37,Quantity Surveying: Estimating & Costing,Udemy,Engineering,Intermediate,"Cost Management,Tendering",3 months
+38,Safe Site Management (Construction),Coursera,Engineering,Beginner,"Safety,OSHA,Risk Assessment",2 months
+39,Renewable Energy Systems,Coursera,Engineering,Beginner,"Solar Energy,Wind Power",3 months
+40,Sustainable Agricultural Land Management,Coursera,Agriculture,Beginner,"Soil Management,Crop Rotation",3 months
+41,Agribusiness Management,Coursera,Agriculture,Intermediate,"Food Supply Chain,Agriculture Economics",4 months
+42,Food Tech & Security,EdX,Agriculture,Intermediate,"Food Preservation,Security Systems",3 months
+43,Animal Husbandry Fundamentals,Udemy,Agriculture,Beginner,"Livestock Management,Veterinary Basics",2 months
+44,Environmental Science & Sustainability,Coursera,Science,Beginner,"Climate Change,Renewables",4 months
+45,Organic Farming Specialization,Udemy,Agriculture,Beginner,"Organic Methods,Soil Science",3 months
+46,Graphic Design Professional Certificate,Coursera,Arts,Beginner,"Photoshop,Illustration,Layout",6 months
+47,Fashion Design Core Skills,Udemy,Arts,Beginner,"Pattern Making,Sewing,Textiles",5 months
+48,Mass Communication & Journalism Basics,Coursera,Media,Beginner,"Reporting,Media Ethics",3 months
+49,Interior Design Fundamentals,Udemy,Arts,Intermediate,"Space Planning,Colors,Styling",4 months
+50,Music Theory Specialization,Coursera,Arts,Beginner,"Harmony,Composition",3 months
+51,User Experience (UX) Design,Coursera,Arts,Beginner,"UX Research,Wireframing",6 months
+52,Foundations of Teaching & Learning,Coursera,Education,Beginner,"Pedagogy,Curriculum,EdTech",3 months
+53,Project Management Professional (PMP),Coursera,Business,Intermediate,"Agile,Waterfall,Project Cycle",6 months
+54,NIM Management Certification,NIM Nigeria,Business,Intermediate,"Nigerian Management,Leadership",4 months
+55,Effective Classroom Management,Udemy,Education,Intermediate,"Instructional Design,Classroom Ethics",2 months
