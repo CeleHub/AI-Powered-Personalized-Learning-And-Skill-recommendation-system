@@ -29,6 +29,12 @@ class UserProfile(BaseModel):
 def read_root():
     return {"message": "Welcome to the Course Recommendation API"}
 
+@app.get("/health")
+@app.head("/health")
+def health_check():
+    """Endpoint for UptimeRobot to keep the service alive."""
+    return {"status": "healthy"}
+
 @app.post("/recommend")
 async def get_recommendations(profile: UserProfile):
     try:
