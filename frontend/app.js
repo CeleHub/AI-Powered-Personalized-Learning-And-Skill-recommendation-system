@@ -1,11 +1,11 @@
 // API Endpoint Configuration
-const PRODUCTION_API_URL = "https://ai-powered-personalized-learning-and.onrender.com";
+const PRODUCTION_API_URL = "https://mtu-elective-advisor-api.onrender.com";
 
 const getApiBaseUrl = () => {
     // If running via file:// protocol or local addresses, default to local backend port
-    if (window.location.hostname === "localhost" || 
-        window.location.hostname === "127.0.0.1" || 
-        window.location.hostname === "" || 
+    if (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname === "" ||
         window.location.protocol === "file:") {
         return "http://localhost:8000";
     }
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         showAuth();
     }
-    
+
     // Background Animation Init
     initBackgroundAnimation();
 });
@@ -48,11 +48,11 @@ function showDashboard() {
     document.getElementById("nav-student-name").innerText = activeStudent.name;
     document.getElementById("student-name").innerText = `Welcome, ${activeStudent.name}`;
     document.getElementById("student-matric").innerText = formatMatric(activeStudent.matric_number);
-    
+
     // Extract entry year
     const entrySuffix = activeStudent.matric_number.substring(0, 2);
     document.getElementById("student-admission").innerText = `20${entrySuffix} Academic Session`;
-    
+
     // Set form fields
     document.getElementById("dash-career").value = activeStudent.career_goal;
     document.getElementById("dash-interests").value = activeStudent.interests.join(", ");
@@ -64,7 +64,7 @@ function showDashboard() {
 // Format Matric Number for Display: AA-BB-CC-DD-EEE
 function formatMatric(matric) {
     if (matric.length === 11) {
-        return `${matric.substring(0,2)}-${matric.substring(2,4)}-${matric.substring(4,6)}-${matric.substring(6,8)}-${matric.substring(8)}`;
+        return `${matric.substring(0, 2)}-${matric.substring(2, 4)}-${matric.substring(4, 6)}-${matric.substring(6, 8)}-${matric.substring(8)}`;
     }
     return matric;
 }
@@ -279,7 +279,7 @@ function renderElectives(data) {
 function createCourseCard(course) {
     const card = document.createElement("div");
     card.className = "course-card";
-    
+
     // Format match score badge
     let badgeClass = "badge-low";
     if (course.match_score > 60) badgeClass = "badge-high";
