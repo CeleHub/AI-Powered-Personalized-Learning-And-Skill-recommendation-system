@@ -6,14 +6,26 @@ import hashlib
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'data', 'database.db')
 ELECTIVES_PATH = os.path.join(os.path.dirname(__file__), 'data', 'electives.json')
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Dynamic SQL placeholders: %s for PostgreSQL, ? for SQLite
+PLACEHOLDER = "%s" if DATABASE_URL else "?"
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+    if DATABASE_URL:
+        import psycopg2
+        import psycopg2.extras
+        # Use DictCursor to align with sqlite3.Row's key-value access style
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.DictCursor)
+        return conn
+    else:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
 
 def init_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    if not DATABASE_URL:
+        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -85,13 +97,17 @@ def register_student(name, matric_number, password, career_goal, interests):
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO students (matric_number, name, password_hash, career_goal, interests) VALUES (?, ?, ?, ?, ?)",
+            f"INSERT INTO students (matric_number, name, password_hash, career_goal, interests) VALUES ({PLACEHOLDER}, {PLACEHOLDER}, {PLACEHOLDER}, {PLACEHOLDER}, {PLACEHOLDER})",
             (matric, name, password_hash, career_goal, interests_str)
         )
         conn.commit()
         return True, "Registration successful!"
-    except sqlite3.IntegrityError:
-        return False, "Matric number is already registered."
+    except Exception as e:
+        # Check for duplicate key / integrity errors dynamically across databases
+        err_msg = str(e).lower()
+        if "unique" in err_msg or "duplicate" in err_msg:
+            return False, "Matric number is already registered."
+        return False, f"Database error: {str(e)}"
     finally:
         conn.close()
 
@@ -103,7 +119,7 @@ def login_student(matric_number, password):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT * FROM students WHERE matric_number = ? AND password_hash = ?",
+        f"SELECT * FROM students WHERE matric_number = {PLACEHOLDER} AND password_hash = {PLACEHOLDER}",
         (matric, password_hash)
     )
     student = cursor.fetchone()
