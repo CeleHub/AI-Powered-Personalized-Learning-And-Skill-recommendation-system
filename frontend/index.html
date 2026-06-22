@@ -3,141 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Course Recommender | Personalized Learning</title>
+    <title>MTU Elective Advisor | Computer Science</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Live neural background -->
     <canvas id="bg-animation"></canvas>
 
     <div id="app" class="container">
-        <h1>AI Course Advisor</h1>
-        
-        <div class="progress-container" id="progress-bar">
-            <div class="progress-step active"></div>
-            <div class="progress-step"></div>
-            <div class="progress-step"></div>
-            <div class="progress-step"></div>
-            <div class="progress-step"></div>
-        </div>
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🎓</span>
+                <div class="logo-text">
+                    <h1>MTU Elective Advisor</h1>
+                    <span class="sub-logo">BSc. Computer Science Pathway</span>
+                </div>
+            </div>
+            <div id="user-nav" class="user-nav hidden">
+                <span id="nav-student-name">Student</span>
+                <button class="btn-logout" onclick="logout()">Sign Out</button>
+            </div>
+        </header>
 
-        <!-- Step 1: Personal Info -->
-        <div class="step-container active" id="step-1">
-            <h2>Personal Information</h2>
-            <p>Let's start by getting to know you.</p>
-            <div class="input-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" placeholder="John Doe">
+        <!-- AUTH VIEW (Sign In & Sign Up) -->
+        <div id="auth-panel" class="panel active">
+            <div class="auth-tabs">
+                <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+                <button id="tab-signup" class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
             </div>
-            <div class="button-group">
-                <div></div>
-                <button class="btn-primary" onclick="nextStep(2)">Continue</button>
-            </div>
-        </div>
 
-        <!-- Step 2: Academic Info -->
-        <div class="step-container" id="step-2">
-            <h2>Academic Performance</h2>
-            <p>Tell us about your educational background.</p>
-            <div class="input-group">
-                <label for="academic-type">Education Level</label>
-                <select id="academic-type" onchange="toggleAcademicFields()">
-                    <option value="PRE_UNIVERSITY">Pre-University (O-Levels)</option>
-                    <option value="UNIVERSITY/POST">University / Post-Graduate</option>
-                </select>
-            </div>
-            
-            <div id="pre-uni-fields">
+            <!-- Login Form -->
+            <form id="form-login" class="auth-form active" onsubmit="handleLogin(event)">
+                <h2>Welcome Back</h2>
+                <p class="auth-description">Access your academic roadmap recommendations.</p>
+                
                 <div class="input-group">
-                    <label>Compulsory Subject Grades (WAEC/NECO)</label>
-                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <div style="flex: 1">
-                            <label style="font-size: 0.8rem">Mathematics</label>
-                            <select id="math-grade">
-                                <option value="A1">A1</option><option value="B2">B2</option><option value="B3">B3</option>
-                                <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
-                                <option value="D7">D7</option><option value="E8">E8</option><option value="F9">F9</option>
-                            </select>
+                    <label for="login-matric">Matric Number</label>
+                    <input type="text" id="login-matric" placeholder="e.g. 23010301097" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="form-signup" class="auth-form" onsubmit="handleSignup(event)">
+                <h2>Create Student Account</h2>
+                <p class="auth-description">Register with your MTU Computer Science matric number.</p>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="John Doe" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-matric">Matric Number</label>
+                        <input type="text" id="signup-matric" placeholder="23010301097" required>
+                        <span class="field-hint">Format: 11-digit BSc. CS code</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="••••••••" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-career">Target Career Goal</label>
+                    <input type="text" id="signup-career" placeholder="e.g. Senior Machine Learning Engineer" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-interests">Technical Interests (comma separated)</label>
+                    <input type="text" id="signup-interests" placeholder="AI, Deep Learning, Cloud Computing" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Register Account</button>
+            </form>
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboard-panel" class="panel hidden">
+            <!-- Student Banner -->
+            <div class="student-profile-banner bento-card">
+                <div class="student-badge">MTU CS</div>
+                <div class="student-details">
+                    <h2 id="student-name">Loading Student Profile...</h2>
+                    <div class="meta-row">
+                        <span><strong>Matric:</strong> <span id="student-matric">-</span></span>
+                        <span><strong>Admission:</strong> <span id="student-admission">-</span></span>
+                        <span><strong>Current Level:</strong> <span id="student-level" class="accent-text">-</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bento Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Profile Settings / Update Goals Card -->
+                <div class="bento-card col-span-1">
+                    <h3>Focus & Career Direction</h3>
+                    <p class="section-desc">Keep your target career updated to align recommendations.</p>
+                    
+                    <div class="input-group compact">
+                        <label for="dash-career">Career Goal</label>
+                        <input type="text" id="dash-career" placeholder="e.g. Mobile Developer">
+                    </div>
+                    <div class="input-group compact">
+                        <label for="dash-interests">Interests</label>
+                        <input type="text" id="dash-interests" placeholder="Web, Mobile, UX">
+                    </div>
+                    <button class="btn-secondary" onclick="updateProfileAndRecs()">Update Goals</button>
+                </div>
+
+                <!-- Recommendation Results Display -->
+                <div class="col-span-2 flex-column">
+                    <div id="api-status-banner" class="status-banner hidden">
+                        <span class="warning-icon">⚠️</span>
+                        <p>AI rate limits reached. Falling back to local keyword matching engine.</p>
+                    </div>
+
+                    <!-- 100L Blocks message -->
+                    <div id="compulsory-block" class="compulsory-block bento-card hidden">
+                        <div class="block-icon">📌</div>
+                        <h3>All 100 Level Courses are Compulsory</h3>
+                        <p>According to Mountain Top University curriculum guidelines, elective courses only begin from 200 Level. Focus on core programming and logic concepts during your first year.</p>
+                    </div>
+
+                    <!-- Course Electives Layout -->
+                    <div id="electives-container" class="semester-section-wrapper">
+                        <!-- Semester 1 -->
+                        <div class="semester-box">
+                            <div class="semester-header">
+                                <span class="sem-badge">Semester 1</span>
+                                <h3>Elective Recommendations</h3>
+                            </div>
+                            <div id="sem-1-list" class="electives-list">
+                                <!-- Dynamically loaded -->
+                            </div>
                         </div>
-                        <div style="flex: 1">
-                            <label style="font-size: 0.8rem">English</label>
-                            <select id="english-grade">
-                                <option value="A1">A1</option><option value="B2">B2</option><option value="B3">B3</option>
-                                <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
-                                <option value="D7">D7</option><option value="E8">E8</option><option value="F9">F9</option>
-                            </select>
+
+                        <!-- Semester 2 -->
+                        <div class="semester-box">
+                            <div class="semester-header">
+                                <span class="sem-badge">Semester 2</span>
+                                <h3>Elective Recommendations</h3>
+                            </div>
+                            
+                            <!-- SIWES notice banner for 300L -->
+                            <div id="siwes-notice" class="siwes-banner hidden">
+                                <div class="siwes-icon">⚙️</div>
+                                <div>
+                                    <h4>SIWES / Internship Semester</h4>
+                                    <p>No academic electives are available. You will be placed in industry for the Students' Industrial Work Experience Scheme (SIWES).</p>
+                                </div>
+                            </div>
+
+                            <div id="sem-2-list" class="electives-list">
+                                <!-- Dynamically loaded -->
+                            </div>
                         </div>
                     </div>
-                    <label>Extra Subjects (Optional)</label>
-                    <textarea id="extra-subjects" placeholder="Physics: B2, Chemistry: C4..." rows="2"></textarea>
                 </div>
             </div>
-
-            <div id="uni-fields" style="display: none;">
-                <div class="input-group">
-                    <label for="gpa">Current GPA / Final GPA</label>
-                    <input type="number" id="gpa" step="0.01" min="0" max="5.0" placeholder="e.g. 4.20">
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button class="btn-secondary" onclick="prevStep(1)">Back</button>
-                <button class="btn-primary" onclick="nextStep(3)">Continue</button>
-            </div>
         </div>
 
-        <!-- Step 3: Interests & Skills -->
-        <div class="step-container" id="step-3">
-            <h2>Interests & Skills</h2>
-            <p>What are you passionate about and what can you already do?</p>
-            <div class="input-group">
-                <label for="interests">Interests (Separate by comma)</label>
-                <input type="text" id="interests" placeholder="AI, Web Development, Cybersecurity">
+        <!-- Global loader overlay -->
+        <div id="loading-overlay" class="loader-overlay hidden">
+            <div class="spinner-box">
+                <div class="loader"></div>
+                <p>Generating Course Pathway...</p>
             </div>
-            <div class="input-group">
-                <label>Current Skills</label>
-                <textarea id="current-skills" placeholder="HTML (Beginner), Python (Intermediate)..." rows="3"></textarea>
-            </div>
-            <div class="button-group">
-                <button class="btn-secondary" onclick="prevStep(2)">Back</button>
-                <button class="btn-primary" onclick="nextStep(4)">Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 4: Career Goals -->
-        <div class="step-container" id="step-4">
-            <h2>Career Goals</h2>
-            <p>This is the most important part. Where do you want to be?</p>
-            <div class="input-group">
-                <label for="career-goal">Target Career / Role</label>
-                <input type="text" id="career-goal" placeholder="e.g. Become a Senior Data Scientist">
-            </div>
-            <div class="button-group">
-                <button class="btn-secondary" onclick="prevStep(3)">Back</button>
-                <button class="btn-primary" id="finalize-btn" onclick="submitProfile()">Generate My Roadmap</button>
-            </div>
-        </div>
-
-        <!-- Step 5: Results Dashboard -->
-        <div class="step-container" id="step-result">
-            <h2 id="result-title">Your Recommendations</h2>
-            <div id="api-status-banner" class="status-banner hidden">
-                <p>⚠️ AI services are busy. Using local knowledge base for specialized recommendations.</p>
-            </div>
-            <div id="dashboard-content" class="dashboard">
-                <!-- Dynamically populated -->
-            </div>
-            <div class="button-group">
-                <button class="btn-secondary" onclick="location.reload()">Start Over</button>
-                <button class="btn-primary" onclick="window.print()">Export PDF</button>
-            </div>
-        </div>
-
-        <div id="loading" style="display: none; text-align: center;">
-            <div class="loader"></div>
-            <p>AI is analyzing your profile...</p>
         </div>
     </div>
 

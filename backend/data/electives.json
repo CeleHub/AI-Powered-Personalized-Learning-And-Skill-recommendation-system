@@ -1,0 +1,130 @@
+[
+  {
+    "code": "MTH 203",
+    "title": "LINEAR ALGEBRA I",
+    "units": 2,
+    "level": 200,
+    "semester": 1,
+    "skills_covered": ["Linear Algebra", "Matrices", "Vector Spaces", "Mathematics", "Machine Learning Fundamentals"]
+  },
+  {
+    "code": "MTH 209",
+    "title": "REAL ANALYSIS",
+    "units": 3,
+    "level": 200,
+    "semester": 1,
+    "skills_covered": ["Calculus", "Real Numbers", "Limits", "Mathematics", "Analytical Thinking"]
+  },
+  {
+    "code": "STA 203",
+    "title": "STATISTICS FOR PHYSICAL SCIENCES AND ENGINEERING",
+    "units": 3,
+    "level": 200,
+    "semester": 1,
+    "skills_covered": ["Statistics", "Probability Distributions", "Data Analysis", "Hypothesis Testing", "R"]
+  },
+  {
+    "code": "MTH 202",
+    "title": "LINEAR ALGEBRA II",
+    "units": 2,
+    "level": 200,
+    "semester": 2,
+    "skills_covered": ["Advanced Linear Algebra", "Eigenvalues", "Inner Products", "Mathematics", "Machine Learning Fundamentals"]
+  },
+  {
+    "code": "STA 204",
+    "title": "PROBABILITY",
+    "units": 4,
+    "level": 200,
+    "semester": 2,
+    "skills_covered": ["Probability Theory", "Random Variables", "Statistics", "Machine Learning Fundamentals", "Quantitative Analysis"]
+  },
+  {
+    "code": "CSC 315",
+    "title": "COMPUTER SYSTEM PERFORMANCE AND EVALUATION",
+    "units": 2,
+    "level": 300,
+    "semester": 1,
+    "skills_covered": ["Systems Performance", "Queuing Theory", "Simulation", "Computer Architecture", "System Modeling", "Analysis"]
+  },
+  {
+    "code": "CSC 317",
+    "title": "OPERATION RESEARCH",
+    "units": 2,
+    "level": 300,
+    "semester": 1,
+    "skills_covered": ["Linear Programming", "Optimization", "Decision Theory", "Operations Research", "Management Science"]
+  },
+  {
+    "code": "CSC 415",
+    "title": "DISTRIBUTED SYSTEM",
+    "units": 2,
+    "level": 400,
+    "semester": 1,
+    "skills_covered": ["Distributed Systems", "Networking", "Cloud Computing", "Concurrency", "Remote Procedure Calls", "Scalability"]
+  },
+  {
+    "code": "CSC 417",
+    "title": "MOBILE DESIGN AND DEVELOPMENTS",
+    "units": 2,
+    "level": 400,
+    "semester": 1,
+    "skills_covered": ["Mobile App Development", "Android", "iOS", "UI/UX Design", "Swift", "Kotlin", "Flutter", "Frontend"]
+  },
+  {
+    "code": "CSC 419",
+    "title": "FORMAL MODELS OF COMPUTATION",
+    "units": 2,
+    "level": 400,
+    "semester": 1,
+    "skills_covered": ["Automata Theory", "Formal Languages", "Computability", "Turing Machines", "Theoretical Computer Science"]
+  },
+  {
+    "code": "CSC 421",
+    "title": "PROJECT MANAGEMENT",
+    "units": 2,
+    "level": 400,
+    "semester": 1,
+    "skills_covered": ["Project Management", "Agile", "Scrum", "Software Lifecycle", "Risk Assessment", "Leadership", "Team Collaboration"]
+  },
+  {
+    "code": "CSC 423",
+    "title": "PRINCIPLES AND APPLICATION OF DATA MINING",
+    "units": 2,
+    "level": 400,
+    "semester": 1,
+    "skills_covered": ["Data Mining", "Machine Learning", "Data Warehousing", "SQL", "Pattern Recognition", "Python", "Big Data"]
+  },
+  {
+    "code": "CSC 425",
+    "title": "SPECIAL TOPICS IN COMPUTER SCIENCE",
+    "units": 2,
+    "level": 400,
+    "semester": 1,
+    "skills_covered": ["Advanced Topics", "Research", "Artificial Intelligence", "Emerging Technologies", "Technical Writing"]
+  },
+  {
+    "code": "CSC 408",
+    "title": "SPECIAL TOPICS IN SOFTWARE ENGINEERING",
+    "units": 2,
+    "level": 400,
+    "semester": 2,
+    "skills_covered": ["Software Engineering", "Clean Code", "Design Patterns", "Refactoring", "CI/CD", "DevOps", "Software Architecture"]
+  },
+  {
+    "code": "CSC 410",
+    "title": "MULTI-AGENT SYSTEM",
+    "units": 2,
+    "level": 400,
+    "semester": 2,
+    "skills_covered": ["Multi-Agent Systems", "Game Theory", "Artificial Intelligence", "Distributed AI", "Autonomous Systems"]
+  },
+  {
+    "code": "CSC 412",
+    "title": "COMPUTER GRAPHICS AND VISUALIZATION",
+    "units": 2,
+    "level": 400,
+    "semester": 2,
+    "skills_covered": ["Computer Graphics", "3D Rendering", "OpenGL", "Shader Programming", "Visualization", "Mathematics in Art"]
+  }
+]

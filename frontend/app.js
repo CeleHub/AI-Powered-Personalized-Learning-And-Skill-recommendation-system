@@ -1,220 +1,385 @@
-// State Management
-let currentStep = 1;
-
-// Deployment Configuration
-// IMPORTANT: Once you deploy your backend to Render, replace the placeholder below with your Render URL
-// Example: "https://your-api-name.onrender.com"
+// API Endpoint Configuration
 const PRODUCTION_API_URL = "https://ai-powered-personalized-learning-and.onrender.com";
 
 const getApiBaseUrl = () => {
-    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    // If running via file:// protocol or local addresses, default to local backend port
+    if (window.location.hostname === "localhost" || 
+        window.location.hostname === "127.0.0.1" || 
+        window.location.hostname === "" || 
+        window.location.protocol === "file:") {
         return "http://localhost:8000";
     }
     return PRODUCTION_API_URL;
 };
 
-function nextStep(step) {
-    document.getElementById(`step-${currentStep}`).classList.remove('active');
-    document.getElementById(`step-${step}`).classList.add('active');
+// Global App State
+let activeStudent = null;
 
-    // Update progress bar
-    const steps = document.querySelectorAll('.progress-step');
-    for (let i = 0; i < steps.length; i++) {
-        if (i < step) {
-            steps[i].classList.add('active');
-        } else {
-            steps[i].classList.remove('active');
-        }
-    }
-
-    currentStep = step;
-}
-
-function prevStep(step) {
-    nextStep(step);
-}
-
-function toggleAcademicFields() {
-    const type = document.getElementById('academic-type').value;
-    if (type === 'PRE_UNIVERSITY') {
-        document.getElementById('pre-uni-fields').style.display = 'block';
-        document.getElementById('uni-fields').style.display = 'none';
+// Page Initialization
+document.addEventListener("DOMContentLoaded", () => {
+    // Check if user session exists in localStorage
+    const savedSession = localStorage.getItem("mtu_student_session");
+    if (savedSession) {
+        activeStudent = JSON.parse(savedSession);
+        showDashboard();
     } else {
-        document.getElementById('pre-uni-fields').style.display = 'none';
-        document.getElementById('uni-fields').style.display = 'block';
+        showAuth();
+    }
+    
+    // Background Animation Init
+    initBackgroundAnimation();
+});
+
+// View Controllers
+function showAuth() {
+    document.getElementById("auth-panel").classList.add("active");
+    document.getElementById("dashboard-panel").classList.add("hidden");
+    document.getElementById("dashboard-panel").classList.remove("active");
+    document.getElementById("user-nav").classList.add("hidden");
+}
+
+function showDashboard() {
+    document.getElementById("auth-panel").classList.remove("active");
+    document.getElementById("dashboard-panel").classList.remove("hidden");
+    document.getElementById("dashboard-panel").classList.add("active");
+    document.getElementById("user-nav").classList.remove("hidden");
+
+    // Populate static details
+    document.getElementById("nav-student-name").innerText = activeStudent.name;
+    document.getElementById("student-name").innerText = `Welcome, ${activeStudent.name}`;
+    document.getElementById("student-matric").innerText = formatMatric(activeStudent.matric_number);
+    
+    // Extract entry year
+    const entrySuffix = activeStudent.matric_number.substring(0, 2);
+    document.getElementById("student-admission").innerText = `20${entrySuffix} Academic Session`;
+    
+    // Set form fields
+    document.getElementById("dash-career").value = activeStudent.career_goal;
+    document.getElementById("dash-interests").value = activeStudent.interests.join(", ");
+
+    // Fetch Recommendations
+    fetchRecommendations();
+}
+
+// Format Matric Number for Display: AA-BB-CC-DD-EEE
+function formatMatric(matric) {
+    if (matric.length === 11) {
+        return `${matric.substring(0,2)}-${matric.substring(2,4)}-${matric.substring(4,6)}-${matric.substring(6,8)}-${matric.substring(8)}`;
+    }
+    return matric;
+}
+
+// Switch Authentication Tabs
+function switchAuthTab(tab) {
+    const tabLogin = document.getElementById("tab-login");
+    const tabSignup = document.getElementById("tab-signup");
+    const formLogin = document.getElementById("form-login");
+    const formSignup = document.getElementById("form-signup");
+
+    if (tab === "login") {
+        tabLogin.classList.add("active");
+        tabSignup.classList.remove("active");
+        formLogin.classList.add("active");
+        formSignup.classList.remove("active");
+    } else {
+        tabLogin.classList.remove("active");
+        tabSignup.classList.add("active");
+        formLogin.classList.remove("active");
+        formSignup.classList.add("active");
     }
 }
 
-async function submitProfile() {
-    const loader = document.getElementById('loading');
-    const finalizeBtn = document.getElementById('finalize-btn');
+// Handle Student Signup
+async function handleSignup(e) {
+    e.preventDefault();
+    showLoader(true);
 
-    loader.style.display = 'block';
-    finalizeBtn.disabled = true;
+    const name = document.getElementById("signup-name").value;
+    const matricRaw = document.getElementById("signup-matric").value;
+    const password = document.getElementById("signup-password").value;
+    const career = document.getElementById("signup-career").value;
+    const interests = document.getElementById("signup-interests").value.split(",").map(i => i.trim()).filter(Boolean);
 
-    // Collect Data
-    const name = document.getElementById('name').value;
-    const academicType = document.getElementById('academic-type').value;
-    const interests = document.getElementById('interests').value.split(',').map(i => i.trim());
-    const careerGoal = document.getElementById('career-goal').value;
-
-    let academicPerformance = {};
-    if (academicType === 'PRE_UNIVERSITY') {
-        const subjects = {
-            "Mathematics": document.getElementById('math-grade').value,
-            "English": document.getElementById('english-grade').value
-        };
-        // Parse extra subjects
-        const extraText = document.getElementById('extra-subjects').value;
-        if (extraText) {
-            extraText.split(',').forEach(item => {
-                const parts = item.split(':');
-                if (parts.length === 2) {
-                    subjects[parts[0].trim()] = parts[1].trim();
-                }
-            });
-        }
-        academicPerformance = { subjects };
-    } else {
-        academicPerformance = { gpa: document.getElementById('gpa').value };
-    }
-
-    // Parse skills
-    const skillsText = document.getElementById('current-skills').value;
-    const skills = skillsText.split(',').map(item => {
-        const match = item.match(/(.+)\((.+)\)/);
-        if (match) {
-            return { name: match[1].trim(), level: match[2].trim() };
-        }
-        return { name: item.trim(), level: 'Beginner' };
-    });
-
-    const profile = {
-        name,
-        academic_type: academicType,
-        academic_performance: academicPerformance,
-        interests,
-        career_goal: careerGoal,
-        skills
-    };
+    const matric = matricRaw.replace(/-/g, "").trim();
 
     try {
-        const apiBaseUrl = getApiBaseUrl();
-        const response = await fetch(`${apiBaseUrl}/recommend`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(profile)
+        const response = await fetch(`${getApiBaseUrl()}/signup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name,
+                matric_number: matric,
+                password,
+                career_goal: career,
+                interests
+            })
         });
 
         const data = await response.json();
-        renderResults(data);
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Could not connect to the backend server. Make sure it is running on port 8000.');
+        if (response.ok) {
+            alert("Account created successfully! Please sign in.");
+            switchAuthTab("login");
+            document.getElementById("login-matric").value = matric;
+            document.getElementById("form-signup").reset();
+        } else {
+            alert(data.detail || "Registration failed. Verify your matric number layout.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server error connecting to backend.");
     } finally {
-        loader.style.display = 'none';
-        finalizeBtn.disabled = false;
+        showLoader(false);
     }
 }
 
-function renderResults(data) {
-    const dashboard = document.getElementById('dashboard-content');
-    dashboard.innerHTML = '';
+// Handle Student Login
+async function handleLogin(e) {
+    e.preventDefault();
+    showLoader(true);
 
-    const statusBanner = document.getElementById('api-status-banner');
-    if (data.api_status === 'fallback') {
-        statusBanner.classList.remove('hidden');
+    const matricRaw = document.getElementById("login-matric").value;
+    const password = document.getElementById("login-password").value;
+    const matric = matricRaw.replace(/-/g, "").trim();
+
+    try {
+        const response = await fetch(`${getApiBaseUrl()}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                matric_number: matric,
+                password
+            })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            activeStudent = data;
+            localStorage.setItem("mtu_student_session", JSON.stringify(data));
+            showDashboard();
+        } else {
+            alert(data.detail || "Invalid matric number or password.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to connect to authentication gateway.");
+    } finally {
+        showLoader(false);
+    }
+}
+
+// Fetch Recommended Electives
+async function fetchRecommendations() {
+    showLoader(true);
+
+    try {
+        const response = await fetch(`${getApiBaseUrl()}/recommend`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                matric_number: activeStudent.matric_number,
+                career_goal: activeStudent.career_goal,
+                interests: activeStudent.interests
+            })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            renderElectives(data);
+        } else {
+            alert(data.detail || "Could not fetch recommendations.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error loading elective courses.");
+    } finally {
+        showLoader(false);
+    }
+}
+
+// Update Local Profile and Re-fetch Recommendations
+async function updateProfileAndRecs() {
+    const career = document.getElementById("dash-career").value;
+    const interests = document.getElementById("dash-interests").value.split(",").map(i => i.trim()).filter(Boolean);
+
+    // Update active student model (locally since SQLite keeps it synchronized, we just pass the parameters in recommendation request)
+    activeStudent.career_goal = career;
+    activeStudent.interests = interests;
+    localStorage.setItem("mtu_student_session", JSON.stringify(activeStudent));
+
+    fetchRecommendations();
+}
+
+// Render Recommendations to UI
+function renderElectives(data) {
+    const level = data.level;
+    document.getElementById("student-level").innerText = `${level} Level`;
+
+    const statusBanner = document.getElementById("api-status-banner");
+    if (data.api_status === "fallback") {
+        statusBanner.classList.remove("hidden");
     } else {
-        statusBanner.classList.add('hidden');
+        statusBanner.classList.add("hidden");
     }
 
-    document.getElementById('result-title').innerText = `Recommendations for ${data.user_name}`;
+    const compulsoryBlock = document.getElementById("compulsory-block");
+    const container = document.getElementById("electives-container");
+    const siwesNotice = document.getElementById("siwes-notice");
+    const sem2List = document.getElementById("sem-2-list");
 
-    // 1. Skill Gaps Card
-    const skillCard = createBentoCard('Skill Roadmap', 'card-large');
-    skillCard.innerHTML += `<p>Based on your goal, you need to focus on these skills:</p>`;
-    const tagsDiv = document.createElement('div');
-    tagsDiv.className = 'tags';
-    data.target_skills.forEach(skill => {
-        tagsDiv.innerHTML += `<span class="tag">${skill}</span>`;
-    });
-    skillCard.appendChild(tagsDiv);
-    dashboard.appendChild(skillCard);
-
-    // 2. University Recommendation Card (if exists)
-    if (data.university_recommendation) {
-        const uniCard = createBentoCard('University Pathway', '');
-        uniCard.innerHTML += `<h3>${data.university_recommendation}</h3>`;
-        uniCard.innerHTML += `<p class="${data.eligibility.eligible ? 'success' : 'error'}" style="color: ${data.eligibility.eligible ? 'var(--success-color)' : 'var(--error-color)'}; font-size: 0.8rem; margin-top: 10px;">
-            ${data.eligibility.message}
-        </p>`;
-        dashboard.appendChild(uniCard);
+    // Hide or show layout based on level
+    if (level === 100) {
+        compulsoryBlock.classList.remove("hidden");
+        container.classList.add("hidden");
+        return;
+    } else {
+        compulsoryBlock.classList.add("hidden");
+        container.classList.remove("hidden");
     }
 
-    // 3. Online Courses
-    data.course_recommendations.forEach((course, index) => {
-        const cardClass = index === 0 ? 'card-large' : '';
-        const courseCard = createBentoCard(course.title, cardClass);
-        courseCard.innerHTML += `
-            <p style="font-size: 0.9rem; color: var(--text-secondary)">${course.provider} | ${course.duration}</p>
-            <div class="tags" style="margin: 10px 0">
-                <span class="tag" style="background: rgba(3, 218, 198, 0.1); border-color: rgba(3, 218, 198, 0.3); color: var(--success-color)">${course.difficulty}</span>
+    // Handle SIWES for 300L
+    if (level === 300) {
+        siwesNotice.classList.remove("hidden");
+        sem2List.classList.add("hidden");
+    } else {
+        siwesNotice.classList.add("hidden");
+        sem2List.classList.remove("hidden");
+    }
+
+    // Populate lists
+    const sem1List = document.getElementById("sem-1-list");
+    sem1List.innerHTML = "";
+    sem2List.innerHTML = "";
+
+    const electives = data.electives || [];
+
+    // Separate semesters
+    const sem1Electives = electives.filter(e => e.semester === 1);
+    const sem2Electives = electives.filter(e => e.semester === 2);
+
+    if (sem1Electives.length === 0) {
+        sem1List.innerHTML = `<div class="empty-list">No electives listed for first semester.</div>`;
+    } else {
+        sem1Electives.forEach(course => {
+            sem1List.appendChild(createCourseCard(course));
+        });
+    }
+
+    if (level !== 300) {
+        if (sem2Electives.length === 0) {
+            sem2List.innerHTML = `<div class="empty-list">No electives listed for second semester.</div>`;
+        } else {
+            sem2Electives.forEach(course => {
+                sem2List.appendChild(createCourseCard(course));
+            });
+        }
+    }
+}
+
+// Create a Styled Bento Course Card
+function createCourseCard(course) {
+    const card = document.createElement("div");
+    card.className = "course-card";
+    
+    // Format match score badge
+    let badgeClass = "badge-low";
+    if (course.match_score > 60) badgeClass = "badge-high";
+    else if (course.match_score > 30) badgeClass = "badge-med";
+
+    card.innerHTML = `
+        <div class="card-header">
+            <span class="course-code">${course.code}</span>
+            <span class="course-units">${course.units} Units</span>
+        </div>
+        <h4>${course.title}</h4>
+        <p class="course-justification">💡 ${course.justification}</p>
+        <div class="skills-box">
+            <span class="skills-label">Covers:</span>
+            <div class="skills-tags">
+                ${course.skills.split(",").map(s => `<span class="skill-tag">${s.trim()}</span>`).join("")}
             </div>
-            <p style="font-size: 0.8rem">${course.skills}</p>
-        `;
-        dashboard.appendChild(courseCard);
-    });
-
-    nextStep('result');
+        </div>
+        <div class="relevance-score">
+            <span>Relevance Match:</span>
+            <span class="score-badge ${badgeClass}">${course.match_score}%</span>
+        </div>
+    `;
+    return card;
 }
 
-function createBentoCard(title, className) {
-    const div = document.createElement('div');
-    div.className = `bento-card ${className}`;
-    div.innerHTML = `<h3>${title}</h3>`;
-    return div;
+// Logout System
+function logout() {
+    activeStudent = null;
+    localStorage.removeItem("mtu_student_session");
+    showAuth();
 }
 
-// Background Animation
-const canvas = document.getElementById('bg-animation');
-const ctx = canvas.getContext('2d');
-
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+// Loader state controller
+function showLoader(visible) {
+    const overlay = document.getElementById("loading-overlay");
+    if (visible) overlay.classList.remove("hidden");
+    else overlay.classList.add("hidden");
 }
 
-window.addEventListener('resize', resize);
-resize();
+// Dynamic particle backdrop renderer (neural vibe)
+function initBackgroundAnimation() {
+    const canvas = document.getElementById("bg-animation");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
 
-const particles = [];
-for (let i = 0; i < 50; i++) {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        radius: Math.random() * 2
-    });
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const particles = [];
+    // Reduced particle count for performance optimization (less canvas load)
+    for (let i = 0; i < 25; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            radius: Math.random() * 2
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(187, 134, 252, 0.15)";
+
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Draw connections (Optimized: uses squared distance check to avoid CPU-heavy square root operations)
+        ctx.strokeStyle = "rgba(187, 134, 252, 0.03)";
+        ctx.lineWidth = 1;
+        const maxDistSq = 120 * 120; // 14400
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq < maxDistSq) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        requestAnimationFrame(draw);
+    }
+    draw();
 }
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(187, 134, 252, 0.2)';
-
-    particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-    });
-
-    requestAnimationFrame(animate);
-}
-
-animate();

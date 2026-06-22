@@ -1,146 +1,176 @@
-import pandas as pd
-import json
+import sqlite3
 import os
+import json
+import datetime
+import hashlib
 
-def load_courses():
-    df = pd.read_csv('data/courses.csv')
-    return df
+DB_PATH = os.path.join(os.path.dirname(__file__), 'data', 'database.db')
+ELECTIVES_PATH = os.path.join(os.path.dirname(__file__), 'data', 'electives.json')
 
-def load_uni_requirements():
-    with open('data/uni_requirements.json', 'r') as f:
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS students (
+            matric_number TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
+            career_goal TEXT NOT NULL,
+            interests TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def validate_matric_number(matric: str) -> bool:
+    """
+    Validates that a matric number is exactly 11 digits and adheres to
+    Mountain Top University's Computer Science department code layout:
+    AA-BB-CC-DD-EEE where BB=01 (College), CC=03 (Department), DD=01 (Programme).
+    """
+    cleaned = matric.replace("-", "").strip()
+    if len(cleaned) != 11 or not cleaned.isdigit():
+        return False
+    
+    college = cleaned[2:4]
+    dept = cleaned[4:6]
+    prog = cleaned[6:8]
+    return college == "01" and dept == "03" and prog == "01"
+
+def calculate_level(matric: str) -> int:
+    """
+    Calculates current academic level from the year of admission (derived from matric AA...)
+    based on the Mountain Top University academic calendar (September - August).
+    """
+    cleaned = matric.replace("-", "").strip()
+    entry_year_suffix = int(cleaned[:2])
+    entry_year = 2000 + entry_year_suffix
+    
+    now = datetime.datetime.now()
+    current_year = now.year
+    current_month = now.month
+    
+    # Determine the start year of the current academic year
+    # Academic calendar runs Sep to Aug, so Sep 2025 starts the 2025/2026 academic year.
+    if current_month >= 9:
+        current_academic_start = current_year
+    else:
+        current_academic_start = current_year - 1
+        
+    years_diff = current_academic_start - entry_year
+    level = (years_diff + 1) * 100
+    
+    # Return level, clamping to normal undergrad range (100L - 400L)
+    if level < 100:
+        return 100
+    return level
+
+def register_student(name, matric_number, password, career_goal, interests):
+    init_db()
+    matric = matric_number.replace("-", "").strip()
+    if not validate_matric_number(matric):
+        return False, "Invalid MTU Computer Science Matric Number. Check that it is an 11-digit BSc. Computer Science code."
+    
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    interests_str = ",".join([i.strip() for i in interests if i.strip()])
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO students (matric_number, name, password_hash, career_goal, interests) VALUES (?, ?, ?, ?, ?)",
+            (matric, name, password_hash, career_goal, interests_str)
+        )
+        conn.commit()
+        return True, "Registration successful!"
+    except sqlite3.IntegrityError:
+        return False, "Matric number is already registered."
+    finally:
+        conn.close()
+
+def login_student(matric_number, password):
+    init_db()
+    matric = matric_number.replace("-", "").strip()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM students WHERE matric_number = ? AND password_hash = ?",
+        (matric, password_hash)
+    )
+    student = cursor.fetchone()
+    conn.close()
+    if student:
+        return {
+            "matric_number": student["matric_number"],
+            "name": student["name"],
+            "career_goal": student["career_goal"],
+            "interests": [i.strip() for i in student["interests"].split(",") if i.strip()]
+        }
+    return None
+
+def load_electives():
+    if not os.path.exists(ELECTIVES_PATH):
+        return []
+    with open(ELECTIVES_PATH, 'r') as f:
         return json.load(f)
 
-def get_difficulty_tier(profile: dict):
+def get_local_fallback_recommendations(level: int, career_goal: str, interests: list):
     """
-    Determines the difficulty tier (Beginner, Intermediate, Advanced)
-    based on GPA or O-Level performance.
+    Ranks the level-appropriate electives locally based on overlap between course
+    skills and the student's career goals/interests.
     """
-    perf = profile.get('academic_performance', {})
+    electives = load_electives()
+    level_electives = [e for e in electives if e['level'] == level]
     
-    if profile.get('academic_type') == 'UNIVERSITY/POST':
-        gpa = float(perf.get('gpa', 0))
-        if gpa >= 3.5:
-            return ["Intermediate", "Advanced"]
-        elif gpa >= 2.5:
-            return ["Beginner", "Intermediate"]
+    keywords = [k.lower().strip() for k in interests if k.strip()]
+    keywords.extend([w.lower().strip() for w in career_goal.split() if len(w) > 2])
+    
+    ranked = []
+    for e in level_electives:
+        score = 0
+        title_lower = e['title'].lower()
+        skills = [s.lower() for s in e['skills_covered']]
+        
+        # Check overlaps
+        for kw in keywords:
+            if kw in title_lower:
+                score += 3
+            for skill in skills:
+                if kw in skill or skill in kw:
+                    score += 2
+                    
+        # Formulate a custom justification based on the matched areas
+        matched_areas = []
+        for skill in e['skills_covered']:
+            for kw in keywords:
+                if kw in skill.lower() and skill not in matched_areas:
+                    matched_areas.append(skill)
+                    
+        if matched_areas:
+            justification = f"Directly supports your goal by covering key skills: {', '.join(matched_areas[:3])}."
         else:
-            return ["Beginner"]
-    else:
-        # Pre-university O-level logic
-        # Focus on Math and English grades
-        math_grade = perf.get('subjects', {}).get('Mathematics', 'C6')
-        english_grade = perf.get('subjects', {}).get('English', 'C6')
-        
-        # Mapping grades: A1=1, B2=2... C6=6, D7=7
-        grade_map = {'A1': 1, 'B2': 2, 'B3': 3, 'C4': 4, 'C5': 5, 'C6': 6, 'D7': 7, 'E8': 8, 'F9': 9}
-        m_val = grade_map.get(math_grade, 7)
-        e_val = grade_map.get(english_grade, 7)
-        
-        if m_val <= 3 and e_val <= 3: # A1-B3
-            return ["Beginner", "Intermediate"]
-        else:
-            return ["Beginner"]
-
-def check_uni_eligibility(profile: dict, target_degree: str):
-    """
-    Checks if a pre-university user is eligible for a degree based on O-levels.
-    """
-    if profile.get('academic_type') != 'PRE_UNIVERSITY':
-        return True, "Academic type is already University level."
-        
-    reqs = load_uni_requirements()
-    if target_degree not in reqs:
-        # If the exact degree isn't in our mapping, we look for a close match or return a general status
-        return True, "No specific O-Level mapping for this degree yet. Consult a faculty advisor."
-        
-    user_subjects = profile.get('academic_performance', {}).get('subjects', {})
-    degree_reqs = reqs[target_degree]
-    
-    # Check compulsory subjects (must be C6 or better)
-    missing = []
-    failed = []
-    grade_map = {'A1': 1, 'B2': 2, 'B3': 3, 'C4': 4, 'C5': 5, 'C6': 6} # Credit passes
-    
-    for sub in degree_reqs['compulsory']:
-        if sub not in user_subjects:
-            missing.append(sub)
-        elif user_subjects[sub] not in grade_map:
-            failed.append(sub)
+            justification = f"Aligns with core Computer Science foundation requirements."
             
-    if missing or failed:
-        msg = ""
-        if missing: msg += f"Missing compulsory subjects: {', '.join(missing)}. "
-        if failed: msg += f"Need at least a C6 in: {', '.join(failed)}."
-        return False, msg
+        ranked.append({
+            "code": e['code'],
+            "title": e['title'],
+            "units": e['units'],
+            "level": e['level'],
+            "semester": e['semester'],
+            "skills": ", ".join(e['skills_covered']),
+            "match_score": score,
+            "justification": justification
+        })
         
-    return True, f"Eligible for {target_degree} at Nigerian Universities."
-
-def get_local_fallback_skills(career_goal: str):
-    """
-    Standardizes a career goal into skills using local keyword matching.
-    Acts as a fail-safe for API limits.
-    """
-    goal = career_goal.lower()
-    
-    # Keyword mapping
-    mapping = {
-        "doctor": ["Anatomy", "Physiology", "Patient Assessment", "Internal Medicine", "Surgery", "Ethics", "Biology"],
-        "nurse": ["Patient Care", "Medication Administration", "Anatomy", "Wound Care", "Nursing Ethics", "Clinical Research"],
-        "lawyer": ["Litigation", "Legal Drafting", "Constitutional Law", "Contracts", "Legal Ethics", "English Common Law"],
-        "accountant": ["Financial Reporting", "Audit", "Management Accounting", "Taxation", "ICAN Prep", "Bookkeeping"],
-        "engineer": ["Mathematics", "Physics", "AutoCAD", "Structural Engineering", "Project Management", "COREN Ethics"],
-        "architect": ["3D Design", "AutoCAD", "Urban Planning", "Building Codes", "Fine Arts", "Statics"],
-        "teacher": ["Pedagogy", "Curriculum Design", "Classroom Management", "Educational Psychology", "Communication"],
-        "artist": ["Fine Arts", "Graphic Design", "Illustration", "Color Theory", "Composition", "Digital Art"],
-        "farmer": ["Crop Science", "Soil Management", "Agribusiness", "Livestock Management", "Sustainable Farming"],
-        "data scientist": ["Python", "SQL", "Statistics", "Machine Learning", "Data Visualization", "Mathematics"],
-        "web developer": ["HTML", "CSS", "JavaScript", "React", "NodeJS", "SQL", "Git"],
-        "cyber": ["Network Security", "Linux", "Ethical Hacking", "Risk Management", "Cryptography"]
-    }
-    
-    for key, skills in mapping.items():
-        if key in goal:
-            return skills
-    
-    # Universal Fallback if no keyword matches
-    return ["Analytical Thinking", "Problem Solving", "Professional Ethics", "Communication", "Time Management", "Leadership"]
-
-def recommend_courses(profile: dict, extracted_skills: list):
-    """
-    Main recommendation function.
-    """
-    df = load_courses()
-    difficulty_tiers = get_difficulty_tier(profile)
-    
-    # Filter by difficulty
-    filtered_df = df[df['difficulty'].isin(difficulty_tiers)]
-    
-    # Filter by user interests or extracted skills
-    # We look for keyword matches in 'skills_covered' or 'category'
-    recommendations = []
-    
-    for _, row in filtered_df.iterrows():
-        course_skills = [s.strip().lower() for s in str(row['skills_covered']).split(",")]
-        category = row['category'].lower()
-        
-        # Check if any extracted skill matches course skills or category
-        match_count = 0
-        for skill in extracted_skills:
-            if skill.lower() in course_skills or skill.lower() in category:
-                match_count += 1
-                
-        if match_count > 0:
-            recommendations.append({
-                "id": row['id'],
-                "title": row['title'],
-                "provider": row['provider'],
-                "category": row['category'],
-                "difficulty": row['difficulty'],
-                "skills": row['skills_covered'],
-                "duration": row['duration'],
-                "match_score": match_count
-            })
-            
-    # Sort by match score
-    recommendations = sorted(recommendations, key=lambda x: x['match_score'], reverse=True)
-    return recommendations[:10] # Return top 10
+    # Sort by match score descending, then by course code ascending
+    ranked = sorted(ranked, key=lambda x: (-x['match_score'], x['code']))
+    return ranked
