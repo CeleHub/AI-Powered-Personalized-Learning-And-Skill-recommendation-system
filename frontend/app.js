@@ -92,7 +92,7 @@ function switchAuthTab(tab) {
 // Handle Student Signup
 async function handleSignup(e) {
     e.preventDefault();
-    showLoader(true);
+    showLoader(true, "Registering student account...");
 
     const name = document.getElementById("signup-name").value;
     const matricRaw = document.getElementById("signup-matric").value;
@@ -135,7 +135,7 @@ async function handleSignup(e) {
 // Handle Student Login
 async function handleLogin(e) {
     e.preventDefault();
-    showLoader(true);
+    showLoader(true, "Signing in...");
 
     const matricRaw = document.getElementById("login-matric").value;
     const password = document.getElementById("login-password").value;
@@ -169,7 +169,7 @@ async function handleLogin(e) {
 
 // Fetch Recommended Electives
 async function fetchRecommendations() {
-    showLoader(true);
+    showLoader(true, "Generating course pathway...");
 
     try {
         const response = await fetch(`${getApiBaseUrl()}/recommend`, {
@@ -314,8 +314,10 @@ function logout() {
 }
 
 // Loader state controller
-function showLoader(visible) {
+function showLoader(visible, message = "Loading...") {
     const overlay = document.getElementById("loading-overlay");
+    const text = overlay.querySelector("p");
+    if (text) text.innerText = message;
     if (visible) overlay.classList.remove("hidden");
     else overlay.classList.add("hidden");
 }
@@ -361,24 +363,7 @@ function initBackgroundAnimation() {
             ctx.fill();
         });
 
-        // Draw connections (Optimized: uses squared distance check to avoid CPU-heavy square root operations)
-        ctx.strokeStyle = "rgba(187, 134, 252, 0.03)";
-        ctx.lineWidth = 1;
-        const maxDistSq = 120 * 120; // 14400
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const distSq = dx * dx + dy * dy;
-                if (distSq < maxDistSq) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-
+        // Connections drawing loop removed to completely eliminate GPU/compositor lag under glassmorphism
         requestAnimationFrame(draw);
     }
     draw();

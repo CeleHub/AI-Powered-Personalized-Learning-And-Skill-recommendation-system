@@ -50,7 +50,7 @@ def rank_electives_with_ai(level: int, electives: list, career_goal: str, intere
 
     while attempts < max_retries:
         try:
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-2.5-flash')
             prompt = f"""
             You are an expert academic advisor in Computer Science at Mountain Top University.
             A student is in {level} Level. Their career goal is "{career_goal}" and their interests are {interests}.
